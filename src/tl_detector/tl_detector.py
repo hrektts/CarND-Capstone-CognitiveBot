@@ -10,6 +10,8 @@ from light_classification.tl_classifier import TLClassifier
 import tf
 import cv2
 import yaml
+import math
+import numpy as np
 
 STATE_COUNT_THRESHOLD = 3
 
@@ -128,7 +130,7 @@ class TLDetector(object):
 
      # return ground truth light state
     def get_light_state_ground_truth(self, light_index):
-        return light.state
+        return light_index.state
 
     def get_light_state(self, light):
         """Determines the current color of the traffic light
@@ -181,7 +183,7 @@ class TLDetector(object):
                 traffic_light_position = self.get_closest_waypoint(traffic_light_pose)
 
                 tl_wpt_closest = self.waypoints.waypoints[traffic_light_position].pose.pose.position
-                distance = math.sqrt(car_closest_wpt.x - tl_wpt_closest.x) ** 2 +
+                distance = math.sqrt((car_closest_wpt.x - tl_wpt_closest.x) ** 2 +
                                     (car_closest_wpt.y - tl_wpt_closest.y) ** 2 )
                                     #+ (car_closest_wpt.z - tl_wpt_closest.z) ** 2)
 
@@ -192,7 +194,7 @@ class TLDetector(object):
 
 
 
-            if (closest_traffic_light is not None) and (closest_traffic_light_index is not None) and (closest_traffic_light_dist < self.visible_range):
+            if (traffic_light_closest_wpt_index is not None) and (closest_traffic_light_index is not None) and (closest_traffic_light_dist < self.visible_range):
                  # Check whether the neighbour traffic light is  ahead or behind the car
                 car_coordinates = self.pose.pose.position
                 car_orientation = self.pose.pose.orientation
