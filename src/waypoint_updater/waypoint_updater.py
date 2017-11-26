@@ -5,6 +5,7 @@ from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
 
 import math
+from itertools import islice, cycle
 
 '''
 This node will publish waypoints from the car's current position to some `x` distance ahead.
@@ -88,6 +89,12 @@ class WaypointUpdater(object):
             """
             TODO: add deceleration with low passfilter to stop the car at self.traffic_light_wpt
             """
+            if self.traffic_light_wpt is not None:
+                for i in (islice(cycle(range(0, len(self.waypoints)),
+                                       self.traffic_light_wpt - 10,
+                                       self.traffic_light_wpt + 10))):
+                    self.set_waypoint_velocity(self.base_waypoints, i, 0.)
+
             # Iterate the base_waypoints to find the closest neighbour
             for i in range (len( wpt_list)):
                 wp_i = wpt_list[i].pose.pose.position
